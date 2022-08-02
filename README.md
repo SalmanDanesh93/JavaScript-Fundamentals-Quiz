@@ -3,9 +3,13 @@
 Description:
 
 This site is utilizes HTML, CSS, & JavaScript to create a quiz on JavaScript. 
+
 When the user clicks the start button, a timer starts from 60 seconds counting down, and they are presented with a question. 
+
 When a question is answered, another appears. 
+
 When all quesions are complete, the score is displayed.
+
 When the user enters their name and clicks the button, an alert is shown.
 
 Screenshots:
