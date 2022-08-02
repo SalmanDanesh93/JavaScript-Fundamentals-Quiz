@@ -39,3 +39,7 @@ The photo below shows the list for the questions in JavaScript that gets called.
 
 The photo below shows the quiz completed with user name input and their score.
 ![site results score](https://user-images.githubusercontent.com/107973681/182293359-befc245b-411e-4a7d-b275-6e66227b0942.png)
+
+
+Site Link: https://salmandanesh93.github.io/JavaScript-Fundamentals-Quiz/
+GitHub: https://github.com/SalmanDanesh93/JavaScript-Fundamentals-Quiz
