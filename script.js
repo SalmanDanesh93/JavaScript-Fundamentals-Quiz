@@ -1,112 +1,153 @@
-(function(){
-    function buildQuiz(){
-      // variable to store the HTML output
-      const output = [];
-  
-      // for each question...
-      myQuestions.forEach(
-        (currentQuestion, questionNumber) => {
-  
-          // variable to store the list of possible answers
-          const answers = [];
-  
-          // and for each available answer...
-          for(letter in currentQuestion.answers){
-  
-            // ...add an HTML radio button
-            answers.push(
-              `<label>
-                <input type="radio" name="question${questionNumber}" value="${letter}">
-                ${letter} :
-                ${currentQuestion.answers[letter]}
-              </label>`
-            );
-          }
-  
-          // add this question and its answers to the output
-          output.push(
-            `<div class="question"> ${currentQuestion.question} </div>
-            <div class="answers"> ${answers.join('')} </div>`
-          );
-        }
-      );
-  
-      // finally combine our output list into one string of HTML and put it on the page
-      quizContainer.innerHTML = output.join('');
-    }
-  
-    function showResults(){
-  
-      // gather answer containers from our quiz
-      const answerContainers = quizContainer.querySelectorAll('.answers');
-  
-      // keep track of user's answers
-      let numCorrect = 0;
-  
-      // for each question...
-      myQuestions.forEach( (currentQuestion, questionNumber) => {
-  
-        // find selected answer
-        const answerContainer = answerContainers[questionNumber];
-        const selector = `input[name=question${questionNumber}]:checked`;
-        const userAnswer = (answerContainer.querySelector(selector) || {}).value;
-  
-        // if answer is correct
-        if(userAnswer === currentQuestion.correctAnswer){
-          // add to the number of correct answers
-          numCorrect++;
-  
-          // color the answers green
-          answerContainers[questionNumber].style.color = 'lightgreen';
-        }
-        // if answer is wrong or blank
-        else{
-          // color the answers red
-          answerContainers[questionNumber].style.color = 'red';
-        }
-      });
-  
-      // show number of correct answers out of total
-      resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
-    }
-  
-    const quizContainer = document.getElementById('quiz');
-    const resultsContainer = document.getElementById('results');
-    const submitButton = document.getElementById('submit');
-    const myQuestions = [
-      {
-        question: "Who invented JavaScript?",
-        answers: {
-          a: "Douglas Crockford",
-          b: "Sheryl Sandberg",
-          c: "Brendan Eich"
-        },
-        correctAnswer: "c"
-      },
-      {
-        question: "Which one of these is a JavaScript package manager?",
-        answers: {
-          a: "Node.js",
-          b: "TypeScript",
-          c: "npm"
-        },
-        correctAnswer: "c"
-      },
-      {
-        question: "Which tool can you use to ensure code quality?",
-        answers: {
-          a: "Angular",
-          b: "jQuery",
-          c: "RequireJS",
-          d: "ESLint"
-        },
-        correctAnswer: "d"
+// Set variable for score and timer
+var score = document.getElementById("scores");
+var timer;
+
+// Set function for display show of form quiz and initiation of onTimer & popalte
+function myFunction() {
+  var x = document.getElementById("quiz");
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+    onTimer();
+    populate();
+  }
+} 
+
+// Set time (seconds) to 60 seconds(1 minute)
+i = 60;
+// Create onTimer function
+function onTimer() {
+  document.getElementById('mycounter').innerHTML = i;
+  i--;
+  // Generates alert for end of quiz one time reaches 0 & displays the showScores() display element.
+  if (i < 0) {
+    alert('Quiz Over!');
+    showScores();
+  }
+  else {
+    clearInterval(i);
+    setTimeout(onTimer, 1000);
+    isEnded();
+  }
+}
+
+// Function that hides timer when quiz ends
+function stopTimer() {
+  i = null;
+}
+
+// Generates functions for score, and format of questions
+function Quiz(questions) {
+  this.score = 0;
+  this.questions = questions;
+  this.questionIndex = 0;
+
+}
+
+// Use of Quiz.prototype.getQuestionIndex to create the form for the question and retrives the list
+Quiz.prototype.getQuestionIndex = function() {
+  return this.questions[this.questionIndex];
+}
+
+// if statement for answer evaluation. Adds score if correct
+Quiz.prototype.guess = function(answer) {
+  if(this.getQuestionIndex().isCorrectAnswer(answer)) {
+      this.score++;
+  }
+  this.questionIndex++;
+}
+
+// end of quiz life. Identifies questionIndex relevant to questions.length.
+Quiz.prototype.isEnded = function() {
+  return this.questionIndex === this.questions.length;
+}
+
+function Question(text, choices, answer) {
+  this.text = text;
+  this.choices = choices;
+  this.answer = answer;
+}
+
+// Function on user selection of question 
+Question.prototype.isCorrectAnswer = function(choice) {
+  return this.answer === choice;
+}
+
+// Populate function shows for end of quiz events and format to load question and add to list and show progress
+function populate() {
+  if(quiz.isEnded()) {
+      showScores();
+      stopTimer();
+  }
+  else {
+      // Creates question element
+      var element = document.getElementById("question");
+      element.innerHTML = quiz.getQuestionIndex().text;
+
+      // Displays question options
+      var choices = quiz.getQuestionIndex().choices;
+      for(var i = 0; i < choices.length; i++) {
+          var element = document.getElementById("choice" + i);
+          element.innerHTML = choices[i];
+          guess("btn" + i, choices[i]);
       }
-    ];
-  
-    // Kick things off
-    buildQuiz();
-  
-    // Event listeners
-    submitButton.addEventListener('click', showResults);
-  })();
+      showProgress();
+  }
+};
+
+// provides function for button click interaction within the quiz on questions
+function guess(id, guess) {
+  var button = document.getElementById(id);
+  button.onclick = function() {
+      quiz.guess(guess);
+      populate();
+  }
+};
+
+// Creates element at footer of form displaying progress out of total questions
+function showProgress() {
+  var currentQuestionNumber = quiz.questionIndex + 1;
+  var element = document.getElementById("progress");
+  element.innerHTML = "Question " + currentQuestionNumber + " of " + quiz.questions.length;
+};
+
+// Displays scores when quiz questions are complete or timer reaches 0
+function showScores() {
+  var gameOverHTML = "<h1>Result</h1>";
+  gameOverHTML += "<h2 id='score'> Your scores: " + quiz.score + "</h2>";
+  var element = document.getElementById("quiz");
+  // Creates button and input for user to display score
+  var sText = "<input id=userInput type=text placeholder=User>";
+  var saveBtn = "<button onclick=returnText()> Submit </button>"
+  element.innerHTML = gameOverHTML + sText + saveBtn;
+};
+
+// Creates user input score alert
+function returnText(){
+  let input = document.getElementById("userInput").value;
+  alert(input + "'s score = " + quiz.score);
+}
+
+// Creates list of questions to be pulled into the quiz
+var questions = [
+  new Question("JavaScript File Has An Extension of: ?", [".Java", ".Js",".javascript", ".xml"], ".Js"),
+  new Question("Event is Used To Check An Empty Text Box:", ["Onclick()", "OnFocus()", "OnBlur()", "None"], "OnBlur()"),
+  new Question("Which Of The Dialog Box Display a Message And a Data Entry Field?", ["Alert()", "Prompt()","Confirm()", "Msg()"], "Prompt()"),
+  new Question("Which is used for Connect To Database?", ["PHP", "HTML", "JS", "All"], "PHP"),
+  new Question("If Button is clicked ...Event Handler is invoked.", ["OnSubmit()", "OnLoad()", "IsPostBack()", "Onclick()"], "Onclick()")
+];
+
+// Creates quiz element with questions
+var quiz = new Quiz(questions);
+
+// Displays compiled quiz with questions and answers
+populate();
+
+// Creates button element for reload function
+const reloadButton = document.querySelector("#reload");
+// location.reload function reload the page
+function reload() {
+    reload = location.reload();
+}
+reloadButton.addEventListener("click", reload, false);

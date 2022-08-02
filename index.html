@@ -9,10 +9,34 @@
     <link rel="stylesheet" href="style.css" />
   </head>
 
-  <body>
-        <div id="quiz"></div>
-        <button id="submit">Submit Quiz</button>
-        <div id="results"></div>
+    <body>
+      <header>
+        <!--  Sets header and start buttion functions for load form and on timer -->
+        <h1>JavaScript Quiz</h1>
+        <button id="startBtn"onclick="myFunction(), onTimer()">Start</button>
+        <!-- Creates element for timer -->
+        <div id="mycounter"></div>
+        <!-- Create refresh button -->
+        <button onClick="window.location.href=window.location.href">Refresh Page</button>
+      </header> 
+      <!-- Creates grid element of questions -->
+      <div class="grid">
+        <div id="quiz">
+            <p id="question"></p>
+          <!-- Creates questions elements, with no data. Will be called on in JS -->
+            <div class="buttons" visible: hide>
+                <button id="btn0"><span id="choice0"></span></button>
+                <button id="btn1"><span id="choice1"></span></button>
+                <button id="btn2"><span id="choice2"></span></button>
+                <button id="btn3"><span id="choice3"></span></button>
+            </div>
+            <hr style="margin-top: 50px">
+            <!--  -->
+            <footer>
+                <p id="progress">Question x of y</p>
+            </footer>
+        </div>
+    </div>
     <script src="script.js"></script>
   </body>
-</html> 
+</html>
